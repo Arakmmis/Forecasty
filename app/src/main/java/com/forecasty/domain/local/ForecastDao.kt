@@ -17,5 +17,8 @@ interface ForecastDao {
     suspend fun removeForecast(forecast: CurrentDayForecast)
 
     @Query("$SELECT_ALL_FROM_TABLE WHERE locationName = :cityName LIMIT 1")
-    suspend fun getCurrentWeather(cityName: String): CurrentDayForecast
+    suspend fun getCurrentWeather(cityName: String): CurrentDayForecast?
+
+    @Query(SELECT_ALL_FROM_TABLE)
+    fun getAllWeather(): List<CurrentDayForecast>
 }
