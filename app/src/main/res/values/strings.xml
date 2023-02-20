@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Forecasty</string>
+
+    <!--  Errors  -->
+    <string name="err_operational_msg">An error has occurred while performing the operation</string>
+    <string name="err_connection">Something is wrong with your connection!</string>
+
+    <!--  Common  -->
+    <string name="retry">Retry</string>
+    <string name="oops">Oops…</string>
+
+    <!--  Splash Screen  -->
+    <string name="fore">Fore</string>
+    <string name="casty">casty</string>
+
+    <!--  Home Screen  -->
+    <string name="title_home">Home</string>
+
+    <!--  Current Weather Screen  -->
+    <string name="title_current_weather">Current Weather</string>
+
+    <!--  Forecast Screen  -->
+    <string name="title_forecast">Forecast</string>
+
 </resources>

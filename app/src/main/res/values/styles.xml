@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TitleText">
+        <item name="android:textSize">28sp</item>
+    </style>
+
+    <style name="LargeText">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="MediumText">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="SmallText">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TitleTextView" parent="TitleText">
+        <item name="android:textColor">@color/text_color_title</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/montserrat_extra_bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="LargeTextView" parent="LargeText">
+        <item name="android:textColor">@color/text_color_large</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/montserrat_bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="MediumTextView" parent="MediumText">
+        <item name="android:textColor">@color/text_color_medium</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="SmallTextView" parent="SmallText">
+        <item name="android:textColor">@color/text_color_small</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/montserrat_light</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+</resources>
