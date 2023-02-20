@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace 'com.forecasty'
-    compileSdk rootProject.compileSdkVersion
+    compileSdk rootProject.compileSdk
 
     defaultConfig {
         applicationId "com.forecasty"
-        minSdk rootProject.minSdkVersion
-        targetSdk rootProject.targetSdkVersion
+        minSdk rootProject.minSdk
+        targetSdk rootProject.targetSdk
         versionCode 1
         versionName "1.0"
 
@@ -48,48 +48,77 @@ android {
     }
 }
 
+ext {
+    // App dependencies
+    androidX = '1.0.0'
+    androidXAnnotations = '1.5.0'
+    androidXLegacySupport = '1.0.0'
+    appCompat = '1.6.1'
+    archLifecycle = '2.5.1'
+    desugaring = '1.1.5'
+    constraintLayout = '2.1.4'
+    espresso = '3.5.1'
+    fragmentKtx = '1.5.5'
+    glide = '4.12.0'
+    junit = '4.13.2'
+    junitAndroid = '1.1.5'
+    kotlin = '1.9.0'
+    material = '1.8.0'
+    okHttp = '5.0.0-alpha.6'
+    recyclerView = '1.2.1'
+    retrofit = '2.9.0'
+    room = '2.5.0'
+    timber = '5.0.1'
+}
+
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation "androidx.appcompat:appcompat:$appCompatVersion"
-    implementation "com.google.android.material:material:$materialVersion"
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation "androidx.core:core-ktx:$kotlin"
+    implementation "androidx.appcompat:appcompat:$appCompat"
+    implementation "com.google.android.material:material:$material"
+    testImplementation "junit:junit:$junit"
+    androidTestImplementation "androidx.test.ext:junit:$junitAndroid"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
 
     // Architecture Components
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$archLifecycleVersion"
-    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
-    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
-    implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycle"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$archLifecycle"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation"
+    implementation "androidx.fragment:fragment-ktx:$fragmentKtx"
 
     // UI dependencies
-    implementation "androidx.appcompat:appcompat:$appCompatVersion"
-    implementation "com.google.android.material:material:$materialVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
-    implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
+    implementation "androidx.appcompat:appcompat:$appCompat"
+    implementation "com.google.android.material:material:$material"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayout"
+    implementation "androidx.recyclerview:recyclerview:$recyclerView"
     implementation "androidx.annotation:annotation:$androidXAnnotations"
     implementation "androidx.legacy:legacy-support-v4:$androidXLegacySupport"
 
     // Logging
-    implementation "com.jakewharton.timber:timber:$timberVersion"
+    implementation "com.jakewharton.timber:timber:$timber"
 
     // Hilt
     implementation "com.google.dagger:hilt-android:$hiltVersion"
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
 
     // Glide
-    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    implementation "com.github.bumptech.glide:glide:$glide"
 
     // Retrofit & OkHttp
-    implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okHttp"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttp"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit"
 
     // Java Desugaring
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugaringVersion"
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugaring"
+
+    // Room
+    implementation "androidx.room:room-runtime:$room"
+    implementation "androidx.room:room-ktx:$room"
+    annotationProcessor "androidx.room:room-compiler:$room"
+    kapt "androidx.room:room-compiler:$room"
 }
 
 // Allow references to generated code

@@ -13,7 +13,7 @@ data class CountryInfo(
     @SerializedName("pod")
     val partOfDay: String? = null
 ) {
-    fun getPartOfDay(): PartOfDay =
+    fun getPoD(): PartOfDay =
         when (partOfDay) {
             "d" -> PartOfDay.DAY
             "n" -> PartOfDay.NIGHT

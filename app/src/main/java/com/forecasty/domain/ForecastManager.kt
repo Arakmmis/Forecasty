@@ -12,4 +12,8 @@ interface ForecastManager {
     suspend fun getForecast(
         query: Map<String, String>
     ): ExtendedForecast
+
+    suspend fun addForecast(forecast: CurrentDayForecast)
+
+    suspend fun removeForecast(forecast: CurrentDayForecast)
 }
