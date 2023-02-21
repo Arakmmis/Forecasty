@@ -204,6 +204,8 @@ class HomeFragment : Fragment(), OnRefreshListener {
         with(binding) {
             tvDesc.text = forecast.weather?.firstOrNull()?.description
 
+            ivIcon.bind(forecast.weather?.firstOrNull()?.id ?: -1)
+
             tvLocation.text =
                 String.format("%s, %s", forecast.locationName, forecast.countryInfo?.name)
 

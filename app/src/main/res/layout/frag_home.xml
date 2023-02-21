@@ -59,15 +59,13 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Full moon night" />
 
-            <ImageView
+            <com.forecasty.view.common.WeatherIconView
                 android:id="@+id/ivIcon"
                 android:layout_width="match_parent"
                 android:layout_height="270dp"
-                android:contentDescription="@string/weather_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvDesc"
-                tools:srcCompat="@drawable/ic_full_moon" />
+                app:layout_constraintTop_toBottomOf="@id/tvDesc" />
 
             <TextView
                 android:id="@+id/tvLocation"
