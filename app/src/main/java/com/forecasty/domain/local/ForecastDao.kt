@@ -20,5 +20,5 @@ interface ForecastDao {
     suspend fun getCurrentWeather(cityName: String): CurrentDayForecast?
 
     @Query(SELECT_ALL_FROM_TABLE)
-    fun getAllWeather(): List<CurrentDayForecast>
+    suspend fun getAllWeather(): List<CurrentDayForecast>
 }

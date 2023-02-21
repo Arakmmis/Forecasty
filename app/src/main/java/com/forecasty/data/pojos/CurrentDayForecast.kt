@@ -15,7 +15,7 @@ data class CurrentDayForecast(
     @Embedded
     val cloudsPercentage: Cloudiness? = null,
 
-    @SerializedName("cord")
+    @SerializedName("coord")
     @Embedded
     val coordinates: Coordinates? = null,
 

@@ -9,6 +9,19 @@
         android:id="@+id/splash_fragment"
         android:name="com.forecasty.view.splash.SplashFragment"
         android:label="Splash Fragment"
-        tools:layout="@layout/frag_splash" />
+        tools:layout="@layout/frag_splash">
+
+        <action
+            android:id="@+id/action_splash_fragment_to_home_fragment"
+            app:destination="@id/home_fragment"
+            app:popUpTo="@id/splash_fragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/home_fragment"
+        android:name="com.forecasty.view.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/frag_home" />
 
 </navigation>

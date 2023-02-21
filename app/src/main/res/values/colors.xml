@@ -3,9 +3,7 @@
     <color name="color_primary">#c2e1fe</color>
     <color name="color_primary_dark">#c2e1fe</color>
     <color name="color_accent">#00c3ff</color>
-
-    <color name="window_background">#c2e1fe</color>
-    <color name="status_bar_color">#B1D6F4</color>
+    <color name="status_bar_color">@color/color_primary</color>
 
     <color name="white_100">#ffffff</color>
     <color name="white_80">#ccffffff</color>
@@ -16,9 +14,12 @@
     <color name="black_80">#cc000000</color>
     <color name="black_60">#99000000</color>
     <color name="black_40">#66000000</color>
+    <color name="black_5">#11000000</color>
 
     <color name="text_color_title">@color/black_100</color>
     <color name="text_color_large">@color/black_80</color>
     <color name="text_color_medium">@color/black_80</color>
     <color name="text_color_small">@color/black_60</color>
+
+    <color name="button_bg_color">#15a9ff</color>
 </resources>

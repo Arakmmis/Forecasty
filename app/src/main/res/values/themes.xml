@@ -6,9 +6,14 @@
         <item name="colorPrimaryVariant">@color/color_primary</item>
         <item name="colorAccent">@color/color_accent</item>
         <item name="colorOnPrimary">@color/color_accent</item>
-        <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:windowBackground">@drawable/bg_gradient</item>
+        <item name="android:actionOverflowButtonStyle">@style/ActionButtonOverflow</item>
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/status_bar_color</item>
+    </style>
+
+    <style name="ActionButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_menu</item>
     </style>
 </resources>

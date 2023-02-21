@@ -4,22 +4,36 @@
     <!--  Errors  -->
     <string name="err_operational_msg">An error has occurred while performing the operation</string>
     <string name="err_connection">Something is wrong with your connection!</string>
+    <string name="err_empty">You can get weather for your location by clicking on the icon above, or search for a city!</string>
+    <string name="err_title_common">Oops…</string>
+    <string name="err_title_empty">Nothing to display!</string>
 
     <!--  Common  -->
     <string name="retry">Retry</string>
-    <string name="oops">Oops…</string>
 
     <!--  Splash Screen  -->
     <string name="fore">Fore</string>
     <string name="casty">casty</string>
 
     <!--  Home Screen  -->
-    <string name="title_home">Home</string>
+    <string name="title_home">Weather Forecast</string>
+    <string name="next_days">Next 5 Days</string>
+    <string name="wind">Wind</string>
+    <string name="humidity">Humidity</string>
+    <string name="weather_icon">Weather Icon</string>
+    <string name="go_to_app_settings">Go to App Settings</string>
+    <string name="feels_like">Feels like</string>
+    <string name="location">Location</string>
+    <string name="search">Search</string>
+    <string name="switch_units">Switch to</string>
 
     <!--  Current Weather Screen  -->
     <string name="title_current_weather">Current Weather</string>
 
     <!--  Forecast Screen  -->
-    <string name="title_forecast">Forecast</string>
+    <string name="title_forecast">Weather Forecast</string>
+    <string name="permission_location_rationale">You need to accept this permission to get the weather forecast for your location</string>
+    <string name="permission_location_rationale_title">Permission Needed</string>
+
 
 </resources>

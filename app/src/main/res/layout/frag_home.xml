@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.home.HomeFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <TextView
+            android:id="@+id/tvToolbarTitle"
+            style="@style/LargeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/title_home" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingStart="24dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintVertical_bias="1.0">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvDesc"
+                style="@style/LargeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="75dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Full moon night" />
+
+            <ImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="match_parent"
+                android:layout_height="270dp"
+                android:contentDescription="@string/weather_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvDesc"
+                tools:srcCompat="@drawable/ic_full_moon" />
+
+            <TextView
+                android:id="@+id/tvLocation"
+                style="@style/MediumTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivIcon"
+                tools:text="Moscow, Russia" />
+
+            <TextView
+                android:id="@+id/tvTemp"
+                style="@style/TitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:textSize="54sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvLocation"
+                tools:text="39" />
+
+            <TextView
+                android:id="@+id/tvTempUnit"
+                style="@style/TitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:textSize="54sp"
+                app:layout_constraintStart_toEndOf="@id/tvTemp"
+                app:layout_constraintTop_toBottomOf="@id/tvLocation"
+                tools:text="°C" />
+
+            <TextView
+                android:id="@+id/tvFeelsLike"
+                style="@style/SmallTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTemp"
+                tools:text="Feels like 32" />
+
+            <TextView
+                android:id="@+id/tvFeelsLikeUnit"
+                style="@style/SmallTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toEndOf="@id/tvFeelsLike"
+                app:layout_constraintTop_toBottomOf="@id/tvTemp"
+                tools:text="°C" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline5"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".5" />
+
+            <TextView
+                android:id="@+id/tvDayOfWeek"
+                style="@style/MediumTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toStartOf="@id/guideline5"
+                app:layout_constraintTop_toBottomOf="@id/tvLocation"
+                tools:text="Saturday" />
+
+            <TextView
+                android:id="@+id/tvDay"
+                style="@style/TitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/montserrat_medium"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toStartOf="@id/guideline5"
+                app:layout_constraintTop_toBottomOf="@id/tvDayOfWeek"
+                tools:text="3rd" />
+
+            <TextView
+                android:id="@+id/tvMonth"
+                style="@style/MediumTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_medium"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toStartOf="@id/guideline5"
+                app:layout_constraintTop_toBottomOf="@id/tvDay"
+                tools:text="Aug" />
+
+            <TextView
+                android:id="@+id/tvNextDays"
+                style="@style/SmallTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/next_days"
+                android:textColor="@color/button_bg_color"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toStartOf="@id/guideline5"
+                app:layout_constraintTop_toBottomOf="@id/tvMonth" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/black_5"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvFeelsLike"
+                app:layout_constraintVertical_bias="0">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/inner_guideline5"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent=".5" />
+
+                    <TextView
+                        android:id="@+id/tvWind"
+                        style="@style/SmallTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="4dp"
+                        android:gravity="center_horizontal"
+                        android:text="@string/wind"
+                        app:drawableTopCompat="@drawable/ic_wind"
+                        app:layout_constraintEnd_toEndOf="@id/inner_guideline5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toStartOf="@id/inner_guideline5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvWind">
+
+                        <TextView
+                            android:id="@+id/tvWindValue"
+                            style="@style/MediumTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            tools:text="15" />
+
+                        <TextView
+                            android:id="@+id/tvWindUnit"
+                            style="@style/MediumTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:gravity="center_horizontal"
+                            tools:text="km/h" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvHumidity"
+                        style="@style/SmallTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="4dp"
+                        android:gravity="center_horizontal"
+                        android:text="@string/humidity"
+                        app:drawableTopCompat="@drawable/ic_humidity"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/inner_guideline5"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvHumidityValue"
+                        style="@style/MediumTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/inner_guideline5"
+                        app:layout_constraintTop_toBottomOf="@id/tvHumidity"
+                        tools:text="55%" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.forecasty.view.common.ErrorView
+        android:id="@+id/errorView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

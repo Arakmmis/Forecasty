@@ -3,14 +3,15 @@ package com.forecasty.domain
 import androidx.lifecycle.LiveData
 import com.forecasty.data.pojos.CurrentDayForecast
 import com.forecasty.data.pojos.ExtendedForecast
+import com.forecasty.util.SingleLiveEvent
 
 interface ForecastManager {
+
+    var state: SingleLiveEvent<QueryState>
 
     fun getQueryState(): LiveData<QueryState>
 
     fun refresh()
-
-    fun retryFailedQuery()
 
     suspend fun getCurrentWeather(
         query: Map<String, String>,

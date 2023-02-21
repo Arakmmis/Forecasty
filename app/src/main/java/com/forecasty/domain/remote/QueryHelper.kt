@@ -4,10 +4,12 @@ import com.forecasty.domain.ForecastManager.FilterTag
 import com.forecasty.domain.remote.QueryHelper.Keys.CITY_NAME
 import com.forecasty.domain.remote.QueryHelper.Keys.LAT
 import com.forecasty.domain.remote.QueryHelper.Keys.LON
+import com.forecasty.domain.remote.QueryHelper.Keys.MEASUREMENT_UNIT
 import com.forecasty.domain.remote.QueryHelper.Keys.TIMESTAMPS_COUNT
 import com.forecasty.domain.remote.QueryHelper.Keys.ZIP_CODE
 import com.forecasty.domain.remote.QueryHelper.Values.FORTY_EIGHT_HOURS_TIMESTAMPS
 import com.forecasty.domain.remote.QueryHelper.Values.TWENTY_FOUR_HOURS_TIMESTAMPS
+import com.forecasty.util.MeasurementUnit
 
 object QueryHelper {
 
@@ -17,6 +19,7 @@ object QueryHelper {
         const val LON = "lon"
         const val ZIP_CODE = "zip"
         const val TIMESTAMPS_COUNT = "cnt"
+        const val MEASUREMENT_UNIT = "units"
     }
 
     object Values {
@@ -26,7 +29,8 @@ object QueryHelper {
 
     fun byCityName(
         name: String,
-        filterTag: FilterTag? = null
+        filterTag: FilterTag? = null,
+        unit: MeasurementUnit = MeasurementUnit.METRIC
     ): HashMap<String, String> {
         val map = HashMap<String, String>()
         map[CITY_NAME] = name
@@ -41,13 +45,16 @@ object QueryHelper {
             else -> {}
         }
 
+        addMeasurementUnit(map, unit)
+
         return map
     }
 
     fun byLatLon(
-        lat: Long,
-        lon: Long,
-        filterTag: FilterTag? = null
+        lat: Double,
+        lon: Double,
+        filterTag: FilterTag? = null,
+        unit: MeasurementUnit = MeasurementUnit.METRIC
     ): HashMap<String, String> {
         val map = HashMap<String, String>()
         map[LAT] = lat.toString()
@@ -63,12 +70,15 @@ object QueryHelper {
             else -> {}
         }
 
+        addMeasurementUnit(map, unit)
+
         return map
     }
 
     fun byZipCode(
         zipCode: String,
-        filterTag: FilterTag? = null
+        filterTag: FilterTag? = null,
+        unit: MeasurementUnit = MeasurementUnit.METRIC
     ): HashMap<String, String> {
         val map = HashMap<String, String>()
         map[ZIP_CODE] = zipCode
@@ -83,6 +93,16 @@ object QueryHelper {
             else -> {}
         }
 
+        addMeasurementUnit(map, unit)
+
         return map
+    }
+
+    private fun addMeasurementUnit(
+        query: HashMap<String, String>,
+        unit: MeasurementUnit
+    ): HashMap<String, String> {
+        query[MEASUREMENT_UNIT] = unit.value
+        return query
     }
 }
