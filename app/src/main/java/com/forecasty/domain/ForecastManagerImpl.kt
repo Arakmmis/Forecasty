@@ -61,14 +61,16 @@ class ForecastManagerImpl @Inject constructor(
 
         val weatherForCity = dao.getCurrentWeather(cityName ?: "")
 
-        val diffInMins = Duration
-            .ofMillis(weatherForCity?.calculatedWeatherTimeStamp ?: 0L)
-            .minus(Duration.ofMillis(currentTime))
+        val diffInMins = Duration.ofMillis(currentTime)
+            .minus(
+                Duration
+                    .ofMillis(weatherForCity?.calculatedWeatherTimeStamp ?: 0L)
+            )
             .toMinutes()
 
         Timber.d(
-            ForecastManagerImpl::class.java.simpleName,
-            "Diff between recorded weather time and now: $diffInMins mins"
+            "${ForecastManagerImpl::class.java.simpleName} " +
+                    "Diff between recorded weather time and now: $diffInMins mins"
         )
 
         return if (diffInMins in 0..5) {
@@ -90,7 +92,7 @@ class ForecastManagerImpl @Inject constructor(
             if (forecast != null)
                 removeForecast(forecast)
             else if (list.size == DB_SIZE_LIMIT)
-                // TODO: change to get the last entered item (sort by timestamp)
+            // TODO: change to get the last entered item (sort by timestamp)
                 removeForecast(list.first())
 
             addForecast(currentWeatherForCity)

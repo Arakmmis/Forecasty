@@ -11,7 +11,6 @@ import androidx.appcompat.widget.SearchView.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -22,13 +21,14 @@ import com.forecasty.domain.QueryState
 import com.forecasty.prefs.PrefsHelper
 import com.forecasty.util.*
 import com.forecasty.view.MainActivity
+import com.forecasty.view.common.BaseFragment
 import com.forecasty.view.common.ErrorView
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+class CurrentWeatherFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private var _binding: FragCurrentWeatherBinding? = null
     private val binding get() = _binding!!
@@ -85,16 +85,19 @@ class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener 
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         setupMenu()
-        observeData()
-        findUserLocation()
+        observeData(vm, binding.errorView)
     }
 
     private fun setupViews() {
         with(binding) {
-            (requireActivity() as MainActivity).setSupportActionBar(toolbar)
-            (requireActivity() as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
-            (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            (requireActivity() as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_left)
+            with((requireActivity() as MainActivity)) {
+                setSupportActionBar(toolbar)
+                supportActionBar?.setDisplayShowTitleEnabled(
+                    false
+                )
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_left)
+            }
 
             toolbar.setNavigationOnClickListener { onBackPressed() }
 
@@ -168,45 +171,6 @@ class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener 
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-    private fun observeData() {
-        vm.weatherData.observe(viewLifecycleOwner) {
-            if (it.data != null) {
-                updateQueryState(QueryState.DONE)
-                updateUi(it.data)
-            } else {
-                updateQueryState(QueryState.ERROR)
-
-                when (it.error) {
-                    is NoSuchFieldException -> {
-                        binding.errorView.bind(ErrorView.StateType.EMPTY, e = it.error)
-                    }
-                    is NoSuchElementException -> {
-                        binding.errorView.bind(
-                            ErrorView.StateType.OPERATIONAL,
-                            desc = getString(R.string.err_location_not_found),
-                            e = it.error
-                        ) {
-                            vm.getCurrentWeather()
-                        }
-                    }
-                    else -> {
-                        binding.errorView.bind(ErrorView.StateType.OPERATIONAL, e = it.error) {
-                            vm.getCurrentWeather()
-                        }
-                    }
-                }
-            }
-        }
-
-        vm.queryState.observe(viewLifecycleOwner) {
-            updateQueryState(it)
-        }
-
-        vm.unitsState.observe(viewLifecycleOwner) {
-            updateUnits(it)
-        }
-    }
-
     private fun findUserLocation() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -244,7 +208,7 @@ class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener 
             binding.layoutWeather.clContainer.visibility = VISIBLE
         }
 
-    private fun updateUi(forecast: CurrentDayForecast) {
+    override fun updateUi(forecast: CurrentDayForecast) {
         with(binding.layoutWeather) {
             tvDesc.text = forecast.weather?.firstOrNull()?.description
 
@@ -272,7 +236,7 @@ class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener 
         }
     }
 
-    private fun updateUnits(unit: MeasurementUnit) {
+    override fun updateUnits(unit: MeasurementUnit) {
         with(binding.layoutWeather) {
             tvTempUnit.text = unit.temp
             tvFeelsLikeUnit.text = unit.temp
@@ -280,7 +244,7 @@ class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener 
         }
     }
 
-    private fun updateQueryState(state: QueryState) {
+    override fun updateQueryState(state: QueryState) {
         with(binding) {
             when (state) {
                 QueryState.LOADING -> {

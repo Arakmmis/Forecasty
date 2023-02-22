@@ -1,14 +1,9 @@
 package com.forecasty.view.home
 
-import android.Manifest
-import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.view.*
-import androidx.activity.result.ActivityResultLauncher
-import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
@@ -19,17 +14,15 @@ import com.forecasty.databinding.FragHomeBinding
 import com.forecasty.domain.QueryState
 import com.forecasty.prefs.PrefsHelper
 import com.forecasty.util.MeasurementUnit
-import com.forecasty.util.queryUserLocation
-import com.forecasty.util.requestLocationPermission
-import com.forecasty.util.showPermissionDialog
 import com.forecasty.view.MainActivity
+import com.forecasty.view.common.BaseFragment
 import com.forecasty.view.common.ErrorView
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), OnRefreshListener {
+class HomeFragment : BaseFragment(), OnRefreshListener {
 
     private var _binding: FragHomeBinding? = null
     private val binding get() = _binding!!
@@ -39,34 +32,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
     @Inject
     lateinit var prefsHelper: PrefsHelper
 
-    private lateinit var locationPermissionRequestLauncher: ActivityResultLauncher<String>
-
-    private val locationResultBlock = { isGranted: Boolean ->
-        if (isGranted) {
-            queryUserLocation(
-                onSuccess = {
-                    vm.getCurrentWeather(lat = it?.latitude, lon = it?.longitude)
-                },
-                onError = {
-                    binding.errorView.bind(
-                        ErrorView.StateType.OPERATIONAL,
-                        e = it
-                    )
-                }
-            )
-        } else {
-            showPermissionDialog()
-
-            updateQueryState(QueryState.ERROR)
-            binding.errorView.bind(
-                ErrorView.StateType.EMPTY,
-                e = IllegalStateException("locationResultBlock: Location denied but not permanently")
-            )
-        }
-    }
-
     override fun onDestroy() {
-        locationPermissionRequestLauncher.unregister()
         super.onDestroy()
         _binding = null
     }
@@ -77,9 +43,6 @@ class HomeFragment : Fragment(), OnRefreshListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragHomeBinding.inflate(inflater, container, false)
-
-        locationPermissionRequestLauncher = requestLocationPermission(locationResultBlock)
-
         return binding.root
     }
 
@@ -87,8 +50,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         setupMenu()
-        observeData()
-        findUserLocation()
+        observeData(vm, binding.errorView)
     }
 
     private fun setupViews() {
@@ -109,31 +71,14 @@ class HomeFragment : Fragment(), OnRefreshListener {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.home_menu, menu)
-
-                val changeUnitItem = menu.findItem(R.id.action_change_unit)
-                changeUnitItem.title = String.format(
-                    "%s %s",
-                    getString(R.string.switch_units),
-                    prefsHelper.measurementUnit.otherValue
-                )
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
-                    R.id.action_location -> {
-                        findUserLocation()
-                        true
-                    }
-
-                    R.id.action_search -> {
+                    R.id.action_go_to_current_weather -> {
                         findNavController().navigate(
                             HomeFragmentDirections.actionHomeFragmentToCurrentWeatherFragment()
                         )
-                        true
-                    }
-
-                    R.id.action_change_unit -> {
-                        vm.switchMeasurementUnit()
                         true
                     }
                     else -> false
@@ -142,61 +87,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-    private fun observeData() {
-        vm.weatherData.observe(viewLifecycleOwner) {
-            if (it.data != null) {
-                updateQueryState(QueryState.DONE)
-                updateUi(it.data)
-            } else {
-                updateQueryState(QueryState.ERROR)
-
-                when (it.error) {
-                    is NoSuchFieldException -> {
-                        binding.errorView.bind(ErrorView.StateType.EMPTY, e = it.error)
-                    }
-                    else -> {
-                        binding.errorView.bind(ErrorView.StateType.OPERATIONAL, e = it.error) {
-                            vm.getCurrentWeather()
-                        }
-                    }
-                }
-            }
-        }
-
-        vm.queryState.observe(viewLifecycleOwner) {
-            updateQueryState(it)
-        }
-
-        vm.unitsState.observe(viewLifecycleOwner) {
-            updateUnits(it)
-        }
-    }
-
-    private fun findUserLocation() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PERMISSION_GRANTED
-        ) {
-            locationPermissionRequestLauncher.launch(
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        } else {
-            queryUserLocation(
-                onSuccess = {
-                    vm.getCurrentWeather(lat = it?.latitude, lon = it?.longitude)
-                },
-                onError = {
-                    binding.errorView.bind(
-                        ErrorView.StateType.OPERATIONAL,
-                        e = it
-                    )
-                }
-            )
-        }
-    }
-
-    private fun updateUi(forecast: CurrentDayForecast) {
+    override fun updateUi(forecast: CurrentDayForecast) {
         with(binding.layoutWeather) {
             tvDesc.text = forecast.weather?.firstOrNull()?.description
 
@@ -224,7 +115,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
         }
     }
 
-    private fun updateUnits(unit: MeasurementUnit) {
+    override fun updateUnits(unit: MeasurementUnit) {
         with(binding.layoutWeather) {
             tvTempUnit.text = unit.temp
             tvFeelsLikeUnit.text = unit.temp
@@ -232,7 +123,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
         }
     }
 
-    private fun updateQueryState(state: QueryState) {
+    override fun updateQueryState(state: QueryState) {
         with(binding) {
             when (state) {
                 QueryState.LOADING -> {

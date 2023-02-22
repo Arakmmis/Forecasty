@@ -24,6 +24,7 @@
     <string name="weather_icon">Weather Icon</string>
     <string name="feels_like">Feels like</string>
     <string name="switch_units">Switch to</string>
+    <string name="go_to_current_weather">Go to Current Weather</string>
 
     <!--  Current Weather Screen  -->
     <string name="title_current_weather">Current Weather</string>
