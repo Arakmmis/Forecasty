@@ -19,7 +19,7 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 
 abstract class BaseViewModel(
-    private val manager: ForecastManager,
+    protected val manager: ForecastManager,
     protected val prefsHelper: PrefsHelper
 ) : ViewModel() {
 
@@ -43,7 +43,8 @@ abstract class BaseViewModel(
         lat: Double? = null,
         lon: Double? = null,
         cityName: String? = null,
-        zipCode: String? = null
+        zipCode: String? = null,
+        isUnitChanged: Boolean = false
     ) {
         when {
             lat != null && lon != null -> {
@@ -53,7 +54,8 @@ abstract class BaseViewModel(
                         lon = lon,
                         unit = prefsHelper.measurementUnit
                     ),
-                    QueryType.LAT_LON
+                    QueryType.LAT_LON,
+                    isUnitChanged
                 )
             }
 
@@ -63,7 +65,8 @@ abstract class BaseViewModel(
                         name = cityName,
                         unit = prefsHelper.measurementUnit
                     ),
-                    QueryType.CITY_NAME
+                    QueryType.CITY_NAME,
+                    isUnitChanged
                 )
             }
 
@@ -73,7 +76,8 @@ abstract class BaseViewModel(
                         zipCode = zipCode,
                         unit = prefsHelper.measurementUnit
                     ),
-                    QueryType.ZIP_CODE
+                    QueryType.ZIP_CODE,
+                    isUnitChanged
                 )
             }
 
@@ -83,14 +87,15 @@ abstract class BaseViewModel(
 
     fun getCurrentWeather(
         query: Map<String, String>,
-        queryType: QueryType
+        queryType: QueryType,
+        isUnitChanged: Boolean = false
     ) {
         viewModelScope.launch(main + job) {
             try {
                 prefsHelper.lastQuery = Pair(query, queryType)
 
                 val response =
-                    manager.getCurrentWeather(query, queryType)
+                    manager.getCurrentWeather(query, queryType, isUnitChanged)
 
                 if (response != null) {
                     _unitsState.postValue(prefsHelper.measurementUnit)
@@ -143,7 +148,7 @@ abstract class BaseViewModel(
         getLastSearchedLocation()
     }
 
-    private fun getLastSearchedLocation() {
+    private fun getLastSearchedLocation(isUnitChanged: Boolean = false) {
         val lastQuery = prefsHelper.lastQuery
 
         if (lastQuery != null) {
@@ -165,7 +170,8 @@ abstract class BaseViewModel(
                     lon = coordinates.lon!!,
                     unit = prefsHelper.measurementUnit
                 ),
-                QueryType.LAT_LON
+                QueryType.LAT_LON,
+                isUnitChanged
             )
         else
             _weatherData.postValue(

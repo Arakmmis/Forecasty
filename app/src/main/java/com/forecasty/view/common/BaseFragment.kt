@@ -8,7 +8,7 @@ import com.forecasty.util.MeasurementUnit
 
 abstract class BaseFragment : Fragment() {
 
-    fun observeData(vm: BaseViewModel, errorView: ErrorView) {
+    open fun observeData(vm: BaseViewModel, errorView: ErrorView) {
         vm.weatherData.observe(viewLifecycleOwner) {
             if (it.data != null) {
                 updateQueryState(QueryState.DONE)

@@ -16,7 +16,8 @@ interface ForecastManager {
 
     suspend fun getCurrentWeather(
         query: Map<String, String>,
-        queryType: QueryType
+        queryType: QueryType,
+        isUnitChanged: Boolean = false
     ): CurrentDayForecast?
 
     suspend fun getForecast(
@@ -26,6 +27,8 @@ interface ForecastManager {
     suspend fun addForecast(forecast: CurrentDayForecast)
 
     suspend fun removeForecast(forecast: CurrentDayForecast)
+
+    suspend fun getLastSearchesList(limit: Int): List<CurrentDayForecast>?
 
     enum class FilterTag {
         TWENTY_FOUR_HOURS, FORTY_EIGHT_HOURS

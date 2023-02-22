@@ -1,16 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/text1"
-    style="@style/MediumTextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:drawablePadding="16dp"
     android:paddingStart="20dp"
-    android:gravity="center_vertical"
     android:paddingTop="12dp"
     android:paddingEnd="20dp"
-    android:paddingBottom="12dp"
-    app:drawableStartCompat="@drawable/ic_history"
-    tools:text="Cairo, EG" />
+    android:paddingBottom="12dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline15"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".15" />
+
+    <TextView
+        android:id="@+id/tvSearchTerm"
+        style="@style/MediumTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="16dp"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        app:drawableStartCompat="@drawable/ic_history"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Cairo, EG" />
+
+    <TextView
+        android:id="@+id/tvLatLon"
+        style="@style/SmallTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/guideline15"
+        app:layout_constraintTop_toBottomOf="@id/tvSearchTerm"
+        tools:text="30.2092, 139.409380" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -35,14 +35,18 @@ class ForecastManagerImpl @Inject constructor(
 
     override suspend fun getCurrentWeather(
         query: Map<String, String>,
-        queryType: QueryType
+        queryType: QueryType,
+        isUnitChanged: Boolean
     ): CurrentDayForecast? {
         updateState(QueryState.LOADING)
 
-        return when (queryType) {
-            QueryType.ZIP_CODE -> executeApiQuery(query)
-            else -> executeDbQuery(query, queryType) ?: executeApiQuery(query)
-        }
+        return if (isUnitChanged)
+            executeApiQuery(query)
+        else
+            when (queryType) {
+                QueryType.ZIP_CODE -> executeApiQuery(query)
+                else -> executeDbQuery(query, queryType) ?: executeApiQuery(query)
+            }
     }
 
     override suspend fun getForecast(
@@ -54,6 +58,9 @@ class ForecastManagerImpl @Inject constructor(
 
     override suspend fun removeForecast(forecast: CurrentDayForecast) =
         dao.removeForecast(forecast)
+
+    override suspend fun getLastSearchesList(limit: Int) =
+        dao.getAllWeather().sortedBy { it.receivedWeatherDateTime }.takeLast(limit)
 
     private suspend fun executeDbQuery(
         query: Map<String, String>,

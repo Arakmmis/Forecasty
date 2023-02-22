@@ -38,5 +38,5 @@ data class CurrentDayForecast(
     @field:TypeConverters(Converters::class)
     var receivedWeatherDateTime: LocalDateTime? = null,
 
-//    val searchTermUsed: String? = null
+    var searchTermUsed: String? = null
 )

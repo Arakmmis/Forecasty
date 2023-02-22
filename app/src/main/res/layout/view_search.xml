@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     app:cardBackgroundColor="@color/black_5"
     app:cardCornerRadius="12dp"
-    app:cardElevation="0dp">
+    app:cardElevation="0dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:layout_height="match_parent"
+        android:paddingTop="8dp">
 
         <ImageView
             android:id="@+id/ivClose"
@@ -20,13 +24,13 @@
             android:contentDescription="@string/close_search"
             android:paddingStart="20dp"
             android:src="@drawable/ic_arrow_left"
-            app:layout_constraintBottom_toBottomOf="@id/acSearch"
+            app:layout_constraintBottom_toBottomOf="@id/etSearch"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/acSearch"
+            app:layout_constraintTop_toTopOf="@id/etSearch"
             app:tint="@color/text_color_large" />
 
-        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-            android:id="@+id/acSearch"
+        <EditText
+            android:id="@+id/etSearch"
             style="@style/AutoCompleteTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -34,6 +38,7 @@
             android:completionThreshold="0"
             android:hint="@string/search_hint"
             android:imeOptions="actionSearch"
+            android:importantForAutofill="no"
             android:inputType="textCapWords"
             android:maxLines="1"
             app:layout_constraintEnd_toStartOf="@id/rlIcons"
@@ -45,9 +50,9 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginEnd="20dp"
-            app:layout_constraintBottom_toBottomOf="@id/acSearch"
+            app:layout_constraintBottom_toBottomOf="@id/etSearch"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/acSearch">
+            app:layout_constraintTop_toTopOf="@id/etSearch">
 
             <ImageView
                 android:id="@+id/ivClear"
@@ -71,7 +76,7 @@
         </RelativeLayout>
 
         <View
-            android:id="@+id/separator"
+            android:id="@+id/sepSearch"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="20dp"
@@ -80,7 +85,7 @@
             android:background="@color/black_5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/acSearch" />
+            app:layout_constraintTop_toBottomOf="@id/etSearch" />
 
         <RadioGroup
             android:id="@+id/rgSearchType"
@@ -93,7 +98,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/separator">
+            app:layout_constraintTop_toBottomOf="@id/sepSearch">
 
             <RadioButton
                 android:id="@+id/rbCity"
@@ -121,6 +126,54 @@
                 android:text="@string/zip_code" />
 
         </RadioGroup>
+
+        <View
+            android:id="@+id/sepRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="20dp"
+            android:background="@color/black_5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rgSearchType" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/svContent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sepRadioGroup">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPreviousSearches"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="8dp"
+                    android:scrollbars="none"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/view_item_previous_search" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

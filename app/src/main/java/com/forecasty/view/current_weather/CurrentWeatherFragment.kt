@@ -22,6 +22,7 @@ import com.forecasty.prefs.PrefsHelper
 import com.forecasty.util.*
 import com.forecasty.view.MainActivity
 import com.forecasty.view.common.BaseFragment
+import com.forecasty.view.common.BaseViewModel
 import com.forecasty.view.common.ErrorView
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -109,7 +110,6 @@ class CurrentWeatherFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListe
             }
 
             searchView.bind(
-                previousSearches = vm.getPreviousSearches(),
                 onSearchCompleted = { searchQuery, queryType ->
                     setSearchViewVisibility(false)
 
@@ -124,11 +124,20 @@ class CurrentWeatherFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListe
                 onGetLocationClicked = {
                     setSearchViewVisibility(false)
                     findUserLocation()
-                },
-                onCloseClicked = {
-                    setSearchViewVisibility(false)
                 }
-            )
+            ) {
+                setSearchViewVisibility(false)
+            }
+        }
+    }
+
+    override fun observeData(vm: BaseViewModel, errorView: ErrorView) {
+        super.observeData(vm, errorView)
+
+        with(vm as CurrentWeatherViewModel) {
+            previousSearches.observe(viewLifecycleOwner) {
+                binding.searchView.setupSearchAdapter(it.reversed())
+            }
         }
     }
 
@@ -157,6 +166,7 @@ class CurrentWeatherFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListe
                     }
 
                     R.id.action_search -> {
+                        vm.getPreviousSearches()
                         setSearchViewVisibility(true)
                         true
                     }
@@ -196,16 +206,30 @@ class CurrentWeatherFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListe
     }
 
     private fun setSearchViewVisibility(isVisible: Boolean) =
-        if (isVisible) {
-            binding.searchView.visibility = VISIBLE
-            binding.toolbar.visibility = GONE
-            binding.layoutWeather.clContainer.visibility = GONE
-        } else {
-            hideSoftKeyboard()
+        with(binding) {
+            if (isVisible) {
+                searchView.visibility = VISIBLE
+                toolbar.visibility = GONE
 
-            binding.searchView.visibility = GONE
-            binding.toolbar.visibility = VISIBLE
-            binding.layoutWeather.clContainer.visibility = VISIBLE
+                if (vm.queryState.value != null
+                    && vm.queryState.value != QueryState.ERROR
+                )
+                    swipe.visibility = GONE
+                else
+                    errorView.visibility = GONE
+            } else {
+                hideSoftKeyboard()
+
+                searchView.visibility = GONE
+                toolbar.visibility = VISIBLE
+
+                if (vm.queryState.value != null
+                    && vm.queryState.value != QueryState.ERROR
+                )
+                    swipe.visibility = VISIBLE
+                else
+                    errorView.visibility = VISIBLE
+            }
         }
 
     override fun updateUi(forecast: CurrentDayForecast) {
@@ -214,8 +238,11 @@ class CurrentWeatherFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListe
 
             ivIcon.bind(forecast.weather?.firstOrNull()?.id ?: -1)
 
-            tvLocation.text =
-                String.format("%s, %s", forecast.locationName, forecast.countryInfo?.name)
+            if (forecast.locationName != null && forecast.countryInfo?.name != null)
+                tvLocation.text =
+                    String.format("%s, %s", forecast.locationName, forecast.countryInfo.name)
+            else
+                tvLocation.visibility = GONE
 
             tvTemp.text =
                 String.format("%d", forecast.temp?.temp?.toInt())
