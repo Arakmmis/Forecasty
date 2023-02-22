@@ -40,4 +40,6 @@ data class CurrentDayForecast(
     @SerializedName("wind")
     @Embedded
     val wind: Wind? = null
+
+    // TODO: Add two fields, one to hold the search term and another for the timestamp
 )

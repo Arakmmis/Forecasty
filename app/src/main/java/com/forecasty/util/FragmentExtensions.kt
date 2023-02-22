@@ -3,10 +3,12 @@ package com.forecasty.util
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.net.Uri
 import android.provider.Settings
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -73,4 +75,21 @@ fun Fragment.openAppSystemSettings() {
             this@openAppSystemSettings.tag
         )
     })
+}
+
+fun Fragment.hideSoftKeyboard() {
+    with(requireActivity()) {
+        this.let {
+            if (it.currentFocus != null) {
+                val inputMethodManager =
+                    it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(it.currentFocus!!.windowToken, 0)
+            }
+        }
+    }
+}
+
+@Suppress("DEPRECATION")
+fun Fragment.onBackPressed() {
+    requireActivity().onBackPressed()
 }

@@ -9,6 +9,7 @@
     <color name="text_color_large">@color/white_80</color>
     <color name="text_color_medium">@color/white_80</color>
     <color name="text_color_small">@color/white_60</color>
+    <color name="text_color_very_small">@color/white_25</color>
 
     <color name="button_bg_color">@color/color_accent</color>
 

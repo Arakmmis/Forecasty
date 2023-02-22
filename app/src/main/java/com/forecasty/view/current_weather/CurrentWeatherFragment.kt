@@ -1,27 +1,26 @@
-package com.forecasty.view.home
+package com.forecasty.view.current_weather
 
 import android.Manifest
-import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.widget.SearchView.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.fragment.findNavController
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.forecasty.R
 import com.forecasty.data.pojos.CurrentDayForecast
-import com.forecasty.databinding.FragHomeBinding
+import com.forecasty.databinding.FragCurrentWeatherBinding
 import com.forecasty.domain.QueryState
 import com.forecasty.prefs.PrefsHelper
-import com.forecasty.util.MeasurementUnit
-import com.forecasty.util.queryUserLocation
-import com.forecasty.util.requestLocationPermission
-import com.forecasty.util.showPermissionDialog
+import com.forecasty.util.*
 import com.forecasty.view.MainActivity
 import com.forecasty.view.common.ErrorView
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,18 +28,17 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), OnRefreshListener {
+class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
-    private var _binding: FragHomeBinding? = null
+    private var _binding: FragCurrentWeatherBinding? = null
     private val binding get() = _binding!!
 
-    private val vm: HomeViewModel by viewModels()
+    private val vm: CurrentWeatherViewModel by viewModels()
 
     @Inject
     lateinit var prefsHelper: PrefsHelper
 
     private lateinit var locationPermissionRequestLauncher: ActivityResultLauncher<String>
-
     private val locationResultBlock = { isGranted: Boolean ->
         if (isGranted) {
             queryUserLocation(
@@ -76,7 +74,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragHomeBinding.inflate(inflater, container, false)
+        _binding = FragCurrentWeatherBinding.inflate(inflater, container, false)
 
         locationPermissionRequestLauncher = requestLocationPermission(locationResultBlock)
 
@@ -95,20 +93,50 @@ class HomeFragment : Fragment(), OnRefreshListener {
         with(binding) {
             (requireActivity() as MainActivity).setSupportActionBar(toolbar)
             (requireActivity() as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
+            (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            (requireActivity() as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_left)
+
+            toolbar.setNavigationOnClickListener { onBackPressed() }
 
             errorView.bind(ErrorView.StateType.NO_ERROR)
-            swipe.setOnRefreshListener(this@HomeFragment)
+            swipe.setOnRefreshListener(this@CurrentWeatherFragment)
 
             tvNextDays.setOnClickListener {
                 // Navigate to forecast screen
             }
+
+            searchView.bind(
+                previousSearches = vm.getPreviousSearches(),
+                onSearchCompleted = { searchQuery, queryType ->
+                    setSearchViewVisibility(false)
+
+                    when (queryType) {
+                        QueryType.CITY_NAME -> vm.getCurrentWeather(cityName = searchQuery)
+
+                        QueryType.ZIP_CODE -> vm.getCurrentWeather(zipCode = searchQuery)
+
+                        QueryType.LAT_LON -> vm.getCurrentWeather(latlon = searchQuery)
+                    }
+                },
+                onGetLocationClicked = {
+                    setSearchViewVisibility(false)
+                    findUserLocation()
+                },
+                onCloseClicked = {
+                    setSearchViewVisibility(false)
+                }
+            )
         }
     }
 
     private fun setupMenu() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+            @SuppressLint("RestrictedApi")
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.home_menu, menu)
+                menuInflater.inflate(R.menu.current_weather_menu, menu)
+
+                if (menu is MenuBuilder)
+                    menu.setOptionalIconsVisible(true)
 
                 val changeUnitItem = menu.findItem(R.id.action_change_unit)
                 changeUnitItem.title = String.format(
@@ -126,9 +154,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
                     }
 
                     R.id.action_search -> {
-                        findNavController().navigate(
-                            HomeFragmentDirections.actionHomeFragmentToCurrentWeatherFragment()
-                        )
+                        setSearchViewVisibility(true)
                         true
                     }
 
@@ -154,6 +180,15 @@ class HomeFragment : Fragment(), OnRefreshListener {
                     is NoSuchFieldException -> {
                         binding.errorView.bind(ErrorView.StateType.EMPTY, e = it.error)
                     }
+                    is NoSuchElementException -> {
+                        binding.errorView.bind(
+                            ErrorView.StateType.OPERATIONAL,
+                            desc = getString(R.string.err_location_not_found),
+                            e = it.error
+                        ) {
+                            vm.getCurrentWeather()
+                        }
+                    }
                     else -> {
                         binding.errorView.bind(ErrorView.StateType.OPERATIONAL, e = it.error) {
                             vm.getCurrentWeather()
@@ -176,7 +211,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PERMISSION_GRANTED
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             locationPermissionRequestLauncher.launch(
                 Manifest.permission.ACCESS_COARSE_LOCATION
@@ -195,6 +230,19 @@ class HomeFragment : Fragment(), OnRefreshListener {
             )
         }
     }
+
+    private fun setSearchViewVisibility(isVisible: Boolean) =
+        if (isVisible) {
+            binding.searchView.visibility = VISIBLE
+            binding.toolbar.visibility = GONE
+            binding.clContainer.visibility = GONE
+        } else {
+            hideSoftKeyboard()
+
+            binding.searchView.visibility = GONE
+            binding.toolbar.visibility = VISIBLE
+            binding.clContainer.visibility = VISIBLE
+        }
 
     private fun updateUi(forecast: CurrentDayForecast) {
         with(binding) {

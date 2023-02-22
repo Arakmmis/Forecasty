@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import com.forecasty.data.pojos.Coordinates
 import com.forecasty.util.GsonUtils
 import com.forecasty.util.MeasurementUnit
+import com.forecasty.util.QueryType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,5 +34,15 @@ class PrefsHelper @Inject constructor(@ApplicationContext context: Context) {
         get() =
             GsonUtils.getCoordinatesFromString(
                 prefs.getString(Keys.LAST_SEARCHED_LOCATION, "") ?: ""
+            )
+
+    var lastQuery: Pair<Map<String, String>, QueryType>?
+        set(value) =
+            prefs.edit {
+                putString(Keys.LAST_QUERY, GsonUtils.query(value!!))
+            }
+        get() =
+            GsonUtils.getQueryFromString(
+                prefs.getString(Keys.LAST_QUERY, "") ?: ""
             )
 }

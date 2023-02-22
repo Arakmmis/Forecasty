@@ -7,6 +7,8 @@
     <string name="err_empty">You can get weather for your location by clicking on the icon above, or search for a city!</string>
     <string name="err_title_common">Oops…</string>
     <string name="err_title_empty">Nothing to display!</string>
+    <string name="err_lat_lon_entry">Please enter a valid latitude and longitude separated by a comma (,)</string>
+    <string name="err_zip_code_entry">Please enter a valid Zip Code</string>
 
     <!--  Common  -->
     <string name="retry">Retry</string>
@@ -17,23 +19,32 @@
 
     <!--  Home Screen  -->
     <string name="title_home">Weather Forecast</string>
-    <string name="next_days">Next 5 Days</string>
     <string name="wind">Wind</string>
     <string name="humidity">Humidity</string>
     <string name="weather_icon">Weather Icon</string>
-    <string name="go_to_app_settings">Go to App Settings</string>
     <string name="feels_like">Feels like</string>
-    <string name="location">Location</string>
-    <string name="search">Search</string>
     <string name="switch_units">Switch to</string>
 
     <!--  Current Weather Screen  -->
     <string name="title_current_weather">Current Weather</string>
+    <string name="search_hint">Search…</string>
+    <string name="location">Location</string>
+    <string name="get_location">Get Your Location</string>
+    <string name="search">Search</string>
+    <string name="next_days">Next 5 Days</string>
+    <string name="clear_search">Clear Search</string>
+    <string name="go_to_app_settings">Go to App Settings</string>
+    <string name="close_search">Close Search</string>
+    <string name="city_name">City Name</string>
+    <string name="lat_lon">Lat/Long</string>
+    <string name="zip_code">Zip Code</string>
 
     <!--  Forecast Screen  -->
     <string name="title_forecast">Weather Forecast</string>
     <string name="permission_location_rationale">You need to accept this permission to get the weather forecast for your location</string>
     <string name="permission_location_rationale_title">Permission Needed</string>
+    <string name="lat_lon_hint">30.0443879, 31.2357257 (Lat, Long)</string>
+    <string name="err_location_not_found">The location you searched for doesn\'t exist, please try again!</string>
 
 
 </resources>

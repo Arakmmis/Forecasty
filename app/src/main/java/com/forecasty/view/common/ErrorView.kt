@@ -18,7 +18,12 @@ class ErrorView @JvmOverloads constructor(
         binding = ViewErrorBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
-    fun bind(stateType: StateType, e: Throwable? = null, listener: OnClickListener? = null) {
+    fun bind(
+        stateType: StateType,
+        desc: String? = null,
+        e: Throwable? = null,
+        listener: OnClickListener? = null
+    ) {
         with(binding) {
             when (stateType) {
                 StateType.NO_ERROR -> {
@@ -29,7 +34,7 @@ class ErrorView @JvmOverloads constructor(
                     btnRetry.visibility = VISIBLE
                     btnRetry.setOnClickListener(listener)
                     tvTitle.text = resources.getString(R.string.err_title_common)
-                    tvDesc.text = resources.getString(R.string.err_connection)
+                    tvDesc.text = desc ?: resources.getString(R.string.err_connection)
 
                     Timber.e(e?.message)
                 }
@@ -38,7 +43,7 @@ class ErrorView @JvmOverloads constructor(
                     btnRetry.visibility = VISIBLE
                     btnRetry.setOnClickListener(listener)
                     tvTitle.text = resources.getString(R.string.err_title_common)
-                    tvDesc.text = resources.getString(R.string.err_operational_msg)
+                    tvDesc.text = desc ?: resources.getString(R.string.err_operational_msg)
 
                     Timber.e(e?.message)
                 }
@@ -46,7 +51,7 @@ class ErrorView @JvmOverloads constructor(
                     container.visibility = VISIBLE
                     btnRetry.visibility = GONE
                     tvTitle.text = resources.getString(R.string.err_title_empty)
-                    tvDesc.text = resources.getString(R.string.err_empty)
+                    tvDesc.text = desc ?: resources.getString(R.string.err_empty)
 
                     Timber.e(e?.message)
                 }

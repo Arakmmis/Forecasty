@@ -3,10 +3,11 @@ package com.forecasty.domain
 import androidx.lifecycle.LiveData
 import com.forecasty.data.pojos.CurrentDayForecast
 import com.forecasty.data.pojos.ExtendedForecast
-import com.forecasty.domain.ForecastManager.QueryTag
+import com.forecasty.domain.local.DbConfig.Constants.DB_SIZE_LIMIT
 import com.forecasty.domain.local.ForecastDao
 import com.forecasty.domain.remote.ForecastRepository
 import com.forecasty.domain.remote.QueryHelper.Keys.CITY_NAME
+import com.forecasty.util.QueryType
 import com.forecasty.util.SingleLiveEvent
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -31,12 +32,13 @@ class ForecastManagerImpl @Inject constructor(
 
     override suspend fun getCurrentWeather(
         query: Map<String, String>,
-        queryTag: QueryTag
+        queryTag: QueryType
     ): CurrentDayForecast? {
         updateState(QueryState.LOADING)
 
         return when (queryTag) {
-            QueryTag.CITY_NAME -> executeDbQuery(query) ?: executeApiQuery(query)
+            // TODO: Change requests to all go through DB before executing API request
+            QueryType.CITY_NAME -> executeDbQuery(query) ?: executeApiQuery(query)
 
             else -> executeApiQuery(query)
         }
@@ -69,8 +71,7 @@ class ForecastManagerImpl @Inject constructor(
             "Diff between recorded weather time and now: $diffInMins mins"
         )
 
-        return if (diffInMins <= 5 && diffInMins < 0) {
-            updateState(QueryState.DONE)
+        return if (diffInMins in 0..5) {
             weatherForCity
         } else
             null
@@ -83,17 +84,16 @@ class ForecastManagerImpl @Inject constructor(
             val list = dao.getAllWeather()
 
             val forecast = list.firstOrNull {
-                it.locationName == currentWeatherForCity.locationName
+                it.id == currentWeatherForCity.id
             }
 
             if (forecast != null)
                 removeForecast(forecast)
-            else if (list.size == 5)
+            else if (list.size == DB_SIZE_LIMIT)
+                // TODO: change to get the last entered item (sort by timestamp)
                 removeForecast(list.first())
 
             addForecast(currentWeatherForCity)
-
-            updateState(QueryState.DONE)
         } else {
             updateState(QueryState.ERROR, "currentWeatherForCity is null")
         }

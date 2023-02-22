@@ -1,4 +1,4 @@
-package com.forecasty.view.home
+package com.forecasty.view.current_weather
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,7 +21,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class CurrentWeatherViewModel @Inject constructor(
     private val manager: ForecastManager,
     private val prefsHelper: PrefsHelper
 ) : BaseViewModel() {
@@ -33,6 +33,37 @@ class HomeViewModel @Inject constructor(
 
     private var _unitsState = SingleLiveEvent<MeasurementUnit>()
     val unitsState: LiveData<MeasurementUnit> = _unitsState
+
+    fun getCurrentWeather(latlon: String) {
+        val separated = latlon.trim().split(regex = Regex(" *, *"))
+
+        if (separated.isEmpty() || separated.size != 2) {
+            _weatherData.postValue(
+                Wrapper(
+                    Status.ERROR,
+                    null,
+                    IllegalArgumentException("getCurrentWeather 0: latlon string is ill-formatted")
+                )
+            )
+
+            return
+        }
+
+        try {
+            getCurrentWeather(
+                lat = separated[0].toDouble(),
+                lon = separated[1].toDouble()
+            )
+        } catch (e: Exception) {
+            _weatherData.postValue(
+                Wrapper(
+                    Status.ERROR,
+                    null,
+                    IllegalArgumentException("getCurrentWeather 0: latlon string is ill-formatted")
+                )
+            )
+        }
+    }
 
     fun getCurrentWeather(
         lat: Double? = null,
@@ -73,11 +104,21 @@ class HomeViewModel @Inject constructor(
             }
 
             else -> {
+                val lastQuery = prefsHelper.lastQuery
+
+                if (lastQuery != null) {
+                    val (query, queryType) = lastQuery
+                    getCurrentWeather(query, queryType)
+
+                    return
+                }
+
                 val coordinates = prefsHelper.coordinates
 
                 if (coordinates != null
                     && coordinates.validateLatitude()
-                    && coordinates.validateLongitude())
+                    && coordinates.validateLongitude()
+                )
                     getCurrentWeather(
                         QueryHelper.byLatLon(
                             lat = coordinates.lat!!,
@@ -103,32 +144,44 @@ class HomeViewModel @Inject constructor(
         queryType: QueryType
     ) = viewModelScope.launch(main + job) {
         try {
+            prefsHelper.lastQuery = Pair(query, queryType)
+
             val response =
                 manager.getCurrentWeather(query, queryType)
 
-            _unitsState.postValue(prefsHelper.measurementUnit)
-            _weatherData.postValue(
-                Wrapper(
-                    Status.SUCCESS,
-                    response,
-                    null
-                )
-            )
+            if (response != null) {
+                _unitsState.postValue(prefsHelper.measurementUnit)
 
-            try {
-                response?.coordinates?.let {
-                    prefsHelper.coordinates = Coordinates(
-                        lat = it.lat!!,
-                        lon = it.lon!!
+                _weatherData.postValue(
+                    Wrapper(
+                        Status.SUCCESS,
+                        response,
+                        null
+                    )
+                )
+
+                try {
+                    response.coordinates?.let {
+                        prefsHelper.coordinates = Coordinates(
+                            lat = it.lat!!,
+                            lon = it.lon!!
+                        )
+                    }
+
+                } catch (e: Exception) {
+                    Timber.e(
+                        "getCurrentWeather 2: " +
+                                "Failed to save location to SP! Err msg: ${e.message}"
                     )
                 }
-
-            } catch (e: Exception) {
-                Timber.e(
-                    "getCurrentWeather 2: " +
-                            "Failed to save location to SP! Err msg: ${e.message}"
+            } else
+                _weatherData.postValue(
+                    Wrapper(
+                        Status.ERROR,
+                        null,
+                        NoSuchElementException("getCurrentWeather 2: Location not found")
+                    )
                 )
-            }
 
         } catch (e: Exception) {
             _weatherData.postValue(
@@ -148,7 +201,8 @@ class HomeViewModel @Inject constructor(
 
         if (coordinates != null
             && coordinates.validateLatitude()
-            && coordinates.validateLongitude())
+            && coordinates.validateLongitude()
+        )
             getCurrentWeather(
                 lat = coordinates.lat,
                 lon = coordinates.lon
@@ -179,4 +233,7 @@ class HomeViewModel @Inject constructor(
             lon = prefsHelper.coordinates?.lon
         )
     }
+
+    fun getPreviousSearches(): List<String> =
+        emptyList()
 }
