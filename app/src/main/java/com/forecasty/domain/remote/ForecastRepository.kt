@@ -2,12 +2,15 @@ package com.forecasty.domain.remote
 
 import com.forecasty.data.pojos.CurrentDayForecast
 import com.forecasty.data.pojos.ExtendedForecast
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class ForecastRepository @Inject constructor(private val api: Api) {
 
     suspend fun getCurrentWeather(query: Map<String, String>): CurrentDayForecast? =
-        api.getCurrentWeather(query).body()
+        api.getCurrentWeather(query).body()?.apply {
+            receivedWeatherDateTime = LocalDateTime.now()
+        }
 
     suspend fun getForecast(query: Map<String, String>): ExtendedForecast? =
         api.getForecast(query).body()

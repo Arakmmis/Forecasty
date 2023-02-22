@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.forecasty.data.pojos.Weather
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.time.LocalDateTime
 
 class Converters {
 
@@ -21,5 +22,19 @@ class Converters {
         val gson = Gson()
         val type = object : TypeToken<Weather>() {}.type
         return listOf(gson.fromJson(json, type))
+    }
+
+    @TypeConverter
+    fun fromLocalDate(date: LocalDateTime?): String? {
+        val gson = Gson()
+        return gson.toJson(date, LocalDateTime::class.java)
+    }
+
+    @TypeConverter
+    fun toLocalDate(json: String?): LocalDateTime? {
+        if (json != null && json.isEmpty()) return null
+
+        val gson = Gson()
+        return gson.fromJson(json, LocalDateTime::class.java)
     }
 }

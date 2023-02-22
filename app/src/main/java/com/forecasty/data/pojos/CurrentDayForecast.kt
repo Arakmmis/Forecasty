@@ -4,6 +4,7 @@ import androidx.room.*
 import com.forecasty.domain.local.Converters
 import com.forecasty.domain.local.DbConfig.Constants.TABLE_NAME
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 @Entity(tableName = TABLE_NAME)
 data class CurrentDayForecast(
@@ -11,16 +12,9 @@ data class CurrentDayForecast(
     @PrimaryKey
     val id: Int,
 
-    @SerializedName("clouds")
-    @Embedded
-    val cloudsPercentage: Cloudiness? = null,
-
     @SerializedName("coord")
     @Embedded
     val coordinates: Coordinates? = null,
-
-    @SerializedName("dt")
-    val calculatedWeatherTimeStamp: Long? = null,
 
     @SerializedName("main")
     @Embedded
@@ -39,7 +33,10 @@ data class CurrentDayForecast(
 
     @SerializedName("wind")
     @Embedded
-    val wind: Wind? = null
+    val wind: Wind? = null,
 
-    // TODO: Add two fields, one to hold the search term and another for the timestamp
+    @field:TypeConverters(Converters::class)
+    var receivedWeatherDateTime: LocalDateTime? = null,
+
+//    val searchTermUsed: String? = null
 )

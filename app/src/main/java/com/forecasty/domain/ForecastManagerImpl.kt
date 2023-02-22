@@ -13,6 +13,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import timber.log.Timber
 import java.time.Duration
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class ForecastManagerImpl @Inject constructor(
@@ -57,24 +58,23 @@ class ForecastManagerImpl @Inject constructor(
     private suspend fun executeDbQuery(query: Map<String, String>): CurrentDayForecast? {
         val cityName = query[CITY_NAME]
 
-        val currentTime = System.currentTimeMillis()
-
         val weatherForCity = dao.getCurrentWeather(cityName ?: "")
 
-        val diffInMins = Duration.ofMillis(currentTime)
-            .minus(
-                Duration
-                    .ofMillis(weatherForCity?.calculatedWeatherTimeStamp ?: 0L)
+        return if (weatherForCity != null) {
+            val diffInMins = Duration.between(
+                weatherForCity.receivedWeatherDateTime,
+                LocalDateTime.now()
+            ).toMinutes()
+
+            Timber.d(
+                "${ForecastManagerImpl::class.java.simpleName} " +
+                        "Diff between recorded weather time and now: $diffInMins mins"
             )
-            .toMinutes()
 
-        Timber.d(
-            "${ForecastManagerImpl::class.java.simpleName} " +
-                    "Diff between recorded weather time and now: $diffInMins mins"
-        )
-
-        return if (diffInMins in 0..5) {
-            weatherForCity
+            if (diffInMins in 0..5)
+                weatherForCity
+            else
+                null
         } else
             null
     }
@@ -92,8 +92,7 @@ class ForecastManagerImpl @Inject constructor(
             if (forecast != null)
                 removeForecast(forecast)
             else if (list.size == DB_SIZE_LIMIT)
-            // TODO: change to get the last entered item (sort by timestamp)
-                removeForecast(list.first())
+                removeForecast(list.sortedBy { it.receivedWeatherDateTime }.first())
 
             addForecast(currentWeatherForCity)
         } else {
