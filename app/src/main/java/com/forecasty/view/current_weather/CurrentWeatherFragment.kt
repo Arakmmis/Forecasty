@@ -101,7 +101,7 @@ class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener 
             errorView.bind(ErrorView.StateType.NO_ERROR)
             swipe.setOnRefreshListener(this@CurrentWeatherFragment)
 
-            tvNextDays.setOnClickListener {
+            layoutWeather.tvNextDays.setOnClickListener {
                 // Navigate to forecast screen
             }
 
@@ -235,17 +235,17 @@ class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener 
         if (isVisible) {
             binding.searchView.visibility = VISIBLE
             binding.toolbar.visibility = GONE
-            binding.clContainer.visibility = GONE
+            binding.layoutWeather.clContainer.visibility = GONE
         } else {
             hideSoftKeyboard()
 
             binding.searchView.visibility = GONE
             binding.toolbar.visibility = VISIBLE
-            binding.clContainer.visibility = VISIBLE
+            binding.layoutWeather.clContainer.visibility = VISIBLE
         }
 
     private fun updateUi(forecast: CurrentDayForecast) {
-        with(binding) {
+        with(binding.layoutWeather) {
             tvDesc.text = forecast.weather?.firstOrNull()?.description
 
             ivIcon.bind(forecast.weather?.firstOrNull()?.id ?: -1)
@@ -273,7 +273,7 @@ class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener 
     }
 
     private fun updateUnits(unit: MeasurementUnit) {
-        with(binding) {
+        with(binding.layoutWeather) {
             tvTempUnit.text = unit.temp
             tvFeelsLikeUnit.text = unit.temp
             tvWindUnit.text = unit.velocity
@@ -285,13 +285,13 @@ class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener 
             when (state) {
                 QueryState.LOADING -> {
                     swipe.isRefreshing = true
-                    clContainer.visibility = View.GONE
+                    layoutWeather.clContainer.visibility = View.GONE
                     errorView.visibility = View.GONE
                 }
 
                 QueryState.ERROR -> {
                     swipe.isRefreshing = false
-                    clContainer.visibility = View.GONE
+                    layoutWeather.clContainer.visibility = View.GONE
                     errorView.visibility = View.VISIBLE
                     errorView.bind(ErrorView.StateType.CONNECTION) {
                         onRefresh()
@@ -300,7 +300,7 @@ class CurrentWeatherFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener 
 
                 QueryState.DONE -> {
                     swipe.isRefreshing = false
-                    clContainer.visibility = View.VISIBLE
+                    layoutWeather.clContainer.visibility = View.VISIBLE
                     errorView.visibility = View.GONE
                     errorView.bind(ErrorView.StateType.NO_ERROR)
                 }

@@ -99,7 +99,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
             errorView.bind(ErrorView.StateType.NO_ERROR)
             swipe.setOnRefreshListener(this@HomeFragment)
 
-            tvNextDays.setOnClickListener {
+            layoutWeather.tvNextDays.setOnClickListener {
                 // Navigate to forecast screen
             }
         }
@@ -197,7 +197,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
     }
 
     private fun updateUi(forecast: CurrentDayForecast) {
-        with(binding) {
+        with(binding.layoutWeather) {
             tvDesc.text = forecast.weather?.firstOrNull()?.description
 
             ivIcon.bind(forecast.weather?.firstOrNull()?.id ?: -1)
@@ -225,7 +225,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
     }
 
     private fun updateUnits(unit: MeasurementUnit) {
-        with(binding) {
+        with(binding.layoutWeather) {
             tvTempUnit.text = unit.temp
             tvFeelsLikeUnit.text = unit.temp
             tvWindUnit.text = unit.velocity
@@ -237,13 +237,13 @@ class HomeFragment : Fragment(), OnRefreshListener {
             when (state) {
                 QueryState.LOADING -> {
                     swipe.isRefreshing = true
-                    clContainer.visibility = View.GONE
+                    layoutWeather.clContainer.visibility = View.GONE
                     errorView.visibility = View.GONE
                 }
 
                 QueryState.ERROR -> {
                     swipe.isRefreshing = false
-                    clContainer.visibility = View.GONE
+                    layoutWeather.clContainer.visibility = View.GONE
                     errorView.visibility = View.VISIBLE
                     errorView.bind(ErrorView.StateType.CONNECTION) {
                         onRefresh()
@@ -252,7 +252,7 @@ class HomeFragment : Fragment(), OnRefreshListener {
 
                 QueryState.DONE -> {
                     swipe.isRefreshing = false
-                    clContainer.visibility = View.VISIBLE
+                    layoutWeather.clContainer.visibility = View.VISIBLE
                     errorView.visibility = View.GONE
                     errorView.bind(ErrorView.StateType.NO_ERROR)
                 }
