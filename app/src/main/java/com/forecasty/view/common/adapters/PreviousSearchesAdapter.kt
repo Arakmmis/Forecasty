@@ -1,4 +1,4 @@
-package com.forecasty.view.current_weather.adapters
+package com.forecasty.view.common.adapters
 
 import android.view.LayoutInflater
 import android.view.View.GONE

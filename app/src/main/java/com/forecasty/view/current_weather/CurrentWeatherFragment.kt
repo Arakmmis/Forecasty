@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
+import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.SearchView.*
@@ -13,6 +14,7 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.forecasty.R
 import com.forecasty.data.pojos.CurrentDayForecast
@@ -70,6 +72,11 @@ class CurrentWeatherFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListe
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        vm.getCurrentWeather()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -87,6 +94,7 @@ class CurrentWeatherFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListe
         setupViews()
         setupMenu()
         observeData(vm, binding.errorView)
+        setupBackPressedBehavior()
     }
 
     private fun setupViews() {
@@ -127,16 +135,6 @@ class CurrentWeatherFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListe
                 }
             ) {
                 setSearchViewVisibility(false)
-            }
-        }
-    }
-
-    override fun observeData(vm: BaseViewModel, errorView: ErrorView) {
-        super.observeData(vm, errorView)
-
-        with(vm as CurrentWeatherViewModel) {
-            previousSearches.observe(viewLifecycleOwner) {
-                binding.searchView.setupSearchAdapter(it.reversed())
             }
         }
     }
@@ -231,6 +229,25 @@ class CurrentWeatherFragment : BaseFragment(), SwipeRefreshLayout.OnRefreshListe
                     errorView.visibility = VISIBLE
             }
         }
+
+    private fun setupBackPressedBehavior() {
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (binding.searchView.visibility == VISIBLE)
+                setSearchViewVisibility(false)
+            else
+                findNavController().navigateUp()
+        }
+    }
+
+    override fun observeData(vm: BaseViewModel, errorView: ErrorView) {
+        super.observeData(vm, errorView)
+
+        with(vm as CurrentWeatherViewModel) {
+            previousSearches.observe(viewLifecycleOwner) {
+                binding.searchView.setupSearchAdapter(it.reversed())
+            }
+        }
+    }
 
     override fun updateUi(forecast: CurrentDayForecast) {
         with(binding.layoutWeather) {

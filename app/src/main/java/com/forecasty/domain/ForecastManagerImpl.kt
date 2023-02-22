@@ -134,7 +134,7 @@ class ForecastManagerImpl @Inject constructor(
 
     private fun updateState(state: QueryState, errMsg: String? = null) {
         errMsg?.let {
-            Timber.e(ForecastManagerImpl::class.simpleName, errMsg)
+            Timber.e("${ForecastManagerImpl::class.simpleName} $errMsg")
         }
 
         this.state.postValue(state)

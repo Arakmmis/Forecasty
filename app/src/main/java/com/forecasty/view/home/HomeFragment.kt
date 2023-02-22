@@ -37,6 +37,11 @@ class HomeFragment : BaseFragment(), OnRefreshListener {
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        vm.getCurrentWeather()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

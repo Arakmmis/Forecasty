@@ -22,10 +22,6 @@ class CurrentWeatherViewModel @Inject constructor(
     private val _previousSearches = MutableLiveData<List<Pair<String, String>>>()
     val previousSearches: LiveData<List<Pair<String, String>>> = _previousSearches
 
-    init {
-        getCurrentWeather()
-    }
-
     fun getCurrentWeather(latlon: String) {
         val separated = latlon.trim().split(regex = Regex(" *, *"))
 

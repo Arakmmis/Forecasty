@@ -10,9 +10,4 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     manager: ForecastManager,
     prefsHelper: PrefsHelper
-) : BaseViewModel(manager, prefsHelper) {
-
-    init {
-        getCurrentWeather()
-    }
-}
+) : BaseViewModel(manager, prefsHelper)

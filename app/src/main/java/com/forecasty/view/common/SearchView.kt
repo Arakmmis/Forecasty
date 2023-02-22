@@ -11,7 +11,7 @@ import com.forecasty.R
 import com.forecasty.databinding.ViewSearchBinding
 import com.forecasty.util.QueryType
 import com.forecasty.util.ValidationUtils
-import com.forecasty.view.current_weather.adapters.PreviousSearchesAdapter
+import com.forecasty.view.common.adapters.PreviousSearchesAdapter
 import java.util.regex.Pattern
 
 class SearchView @JvmOverloads constructor(
