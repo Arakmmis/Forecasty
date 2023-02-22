@@ -19,6 +19,9 @@ interface ForecastDao {
     @Query("$SELECT_ALL_FROM_TABLE WHERE locationName = :cityName LIMIT 1")
     suspend fun getCurrentWeather(cityName: String): CurrentDayForecast?
 
+    @Query("$SELECT_ALL_FROM_TABLE WHERE lat = :lat AND lon = :lon LIMIT 1")
+    suspend fun getCurrentWeather(lat: Double, lon: Double): CurrentDayForecast?
+
     @Query(SELECT_ALL_FROM_TABLE)
     suspend fun getAllWeather(): List<CurrentDayForecast>
 }

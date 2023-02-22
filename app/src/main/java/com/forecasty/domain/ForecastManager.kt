@@ -16,7 +16,7 @@ interface ForecastManager {
 
     suspend fun getCurrentWeather(
         query: Map<String, String>,
-        queryTag: QueryType
+        queryType: QueryType
     ): CurrentDayForecast?
 
     suspend fun getForecast(
