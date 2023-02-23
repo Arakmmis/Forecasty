@@ -6,9 +6,9 @@ import com.forecasty.data.pojos.CurrentDayForecast
 import com.forecasty.domain.QueryState
 import com.forecasty.util.MeasurementUnit
 
-abstract class BaseFragment : Fragment() {
+abstract class BaseCurrentWeatherFragment : Fragment() {
 
-    open fun observeData(vm: BaseViewModel, errorView: ErrorView) {
+    open fun observeData(vm: BaseCurrentWeatherViewModel, errorView: ErrorView) {
         vm.weatherData.observe(viewLifecycleOwner) {
             if (it.data != null) {
                 updateQueryState(QueryState.DONE)

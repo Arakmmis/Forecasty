@@ -28,5 +28,18 @@ class ForecastRepository @Inject constructor(private val api: Api) {
         }
 
     suspend fun getForecast(query: Map<String, String>): ExtendedForecast? =
-        api.getForecast(query).body()
+        api.getForecast(query).body()?.apply {
+            searchTermUsed = when {
+                query[CITY_NAME] != null -> query[CITY_NAME]
+
+                query[LAT] != null && query[LON] != null ->
+                    String.format("%.7f, %.7f", query[LAT]?.toDouble(), query[LON]?.toDouble())
+
+                query[ZIP_CODE] != null -> query[ZIP_CODE]
+
+                else -> null
+            }
+
+            receivedWeatherDateTime = LocalDateTime.now()
+        }
 }

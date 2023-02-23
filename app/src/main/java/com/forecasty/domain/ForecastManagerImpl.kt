@@ -3,7 +3,8 @@ package com.forecasty.domain
 import androidx.lifecycle.LiveData
 import com.forecasty.data.pojos.CurrentDayForecast
 import com.forecasty.data.pojos.ExtendedForecast
-import com.forecasty.domain.local.DbConfig.Constants.DB_SIZE_LIMIT
+import com.forecasty.domain.local.DbConfig.Constants.CURRENT_WEATHER_TABLE_SIZE_LIMIT
+import com.forecasty.domain.local.DbConfig.Constants.FORECASTS_TABLE_SIZE_LIMIT
 import com.forecasty.domain.local.ForecastDao
 import com.forecasty.domain.remote.ForecastRepository
 import com.forecasty.domain.remote.QueryHelper.Keys.CITY_NAME
@@ -33,6 +34,32 @@ class ForecastManagerImpl @Inject constructor(
         job.cancelChildren()
     }
 
+    private fun isTimeDiffValid(receivedWeatherDateTime: LocalDateTime?): Boolean {
+        val diffInMins = Duration.between(
+            receivedWeatherDateTime,
+            LocalDateTime.now()
+        ).toMinutes()
+
+        Timber.d(
+            "${ForecastManagerImpl::class.java.simpleName} " +
+                    "Diff between recorded weather time and now: $diffInMins mins"
+        )
+
+        return diffInMins in 0..5
+    }
+
+    private fun updateState(state: QueryState, errMsg: String? = null) {
+        errMsg?.let {
+            Timber.e("${ForecastManagerImpl::class.simpleName} $errMsg")
+        }
+
+        this.state.postValue(state)
+    }
+
+    /**
+     * CURRENT WEATHER
+     */
+
     override suspend fun getCurrentWeather(
         query: Map<String, String>,
         queryType: QueryType,
@@ -41,28 +68,19 @@ class ForecastManagerImpl @Inject constructor(
         updateState(QueryState.LOADING)
 
         return if (isUnitChanged)
-            executeApiQuery(query)
+            executeCurrentWeatherApiQuery(query)
         else
             when (queryType) {
-                QueryType.ZIP_CODE -> executeApiQuery(query)
-                else -> executeDbQuery(query, queryType) ?: executeApiQuery(query)
+                QueryType.ZIP_CODE -> executeCurrentWeatherApiQuery(query)
+                else -> executeCurrentWeatherDbQuery(query, queryType)
+                    ?: executeCurrentWeatherApiQuery(query)
             }
     }
 
-    override suspend fun getForecast(
-        query: Map<String, String>
-    ): ExtendedForecast? = repo.getForecast(query)
-
-    override suspend fun addForecast(forecast: CurrentDayForecast) =
-        dao.insertForecast(forecast)
-
-    override suspend fun removeForecast(forecast: CurrentDayForecast) =
-        dao.removeForecast(forecast)
-
-    override suspend fun getLastSearchesList(limit: Int) =
+    override suspend fun getCurrentWeatherLastSearchesList(limit: Int) =
         dao.getAllWeather().sortedBy { it.receivedWeatherDateTime }.takeLast(limit)
 
-    private suspend fun executeDbQuery(
+    private suspend fun executeCurrentWeatherDbQuery(
         query: Map<String, String>,
         queryType: QueryType
     ): CurrentDayForecast? {
@@ -87,7 +105,7 @@ class ForecastManagerImpl @Inject constructor(
         }
 
         return if (weatherForCity != null) {
-            if (isTimeDiffValid(weatherForCity))
+            if (isTimeDiffValid(weatherForCity.receivedWeatherDateTime))
                 weatherForCity
             else
                 null
@@ -95,21 +113,7 @@ class ForecastManagerImpl @Inject constructor(
             null
     }
 
-    private fun isTimeDiffValid(weather: CurrentDayForecast): Boolean {
-        val diffInMins = Duration.between(
-            weather.receivedWeatherDateTime,
-            LocalDateTime.now()
-        ).toMinutes()
-
-        Timber.d(
-            "${ForecastManagerImpl::class.java.simpleName} " +
-                    "Diff between recorded weather time and now: $diffInMins mins"
-        )
-
-        return diffInMins in 0..5
-    }
-
-    private suspend fun executeApiQuery(query: Map<String, String>): CurrentDayForecast? {
+    private suspend fun executeCurrentWeatherApiQuery(query: Map<String, String>): CurrentDayForecast? {
         val currentWeatherForCity = repo.getCurrentWeather(query)
 
         if (currentWeatherForCity != null) {
@@ -120,11 +124,11 @@ class ForecastManagerImpl @Inject constructor(
             }
 
             if (forecast != null)
-                removeForecast(forecast)
-            else if (list.size == DB_SIZE_LIMIT)
-                removeForecast(list.sortedBy { it.receivedWeatherDateTime }.first())
+                dao.removeCurrentWeather(forecast)
+            else if (list.size == CURRENT_WEATHER_TABLE_SIZE_LIMIT)
+                dao.removeCurrentWeather(list.sortedBy { it.receivedWeatherDateTime }.first())
 
-            addForecast(currentWeatherForCity)
+            dao.insertCurrentWeather(currentWeatherForCity)
         } else {
             updateState(QueryState.ERROR, "currentWeatherForCity is null")
         }
@@ -132,11 +136,41 @@ class ForecastManagerImpl @Inject constructor(
         return currentWeatherForCity
     }
 
-    private fun updateState(state: QueryState, errMsg: String? = null) {
-        errMsg?.let {
-            Timber.e("${ForecastManagerImpl::class.simpleName} $errMsg")
+    /**
+     * FORECASTS
+     */
+
+    override suspend fun getForecast(
+        query: Map<String, String>,
+        queryType: QueryType
+    ): ExtendedForecast? {
+        updateState(QueryState.LOADING)
+        return executeForecastApiQuery(query)
+    }
+
+    override suspend fun getForecastsLastSearchesList(limit: Int) =
+        dao.getAllForecasts().sortedBy { it.receivedWeatherDateTime }.takeLast(limit)
+
+    private suspend fun executeForecastApiQuery(query: Map<String, String>): ExtendedForecast? {
+        val extendedForecast = repo.getForecast(query)
+
+        if (extendedForecast != null) {
+            val list = dao.getAllForecasts()
+
+            val forecast = list.firstOrNull {
+                it.city?.id == extendedForecast.city?.id
+            }
+
+            if (forecast != null)
+                dao.removeForecast(forecast)
+            else if (list.size == FORECASTS_TABLE_SIZE_LIMIT)
+                dao.removeForecast(list.sortedBy { it.receivedWeatherDateTime }.first())
+
+            dao.insertForecast(extendedForecast)
+        } else {
+            updateState(QueryState.ERROR, "extendedForecast is null")
         }
 
-        this.state.postValue(state)
+        return extendedForecast
     }
 }

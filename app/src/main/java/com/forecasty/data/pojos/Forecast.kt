@@ -1,24 +1,35 @@
 package com.forecasty.data.pojos
 
+import androidx.room.Embedded
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.forecasty.domain.local.Converters
 import com.google.gson.annotations.SerializedName
 
 data class Forecast(
     @SerializedName("id")
-    val id: Int? = null,
-    @SerializedName("clouds")
-    val cloudsPercentage: Cloudiness? = null,
-    @SerializedName("cord")
-    val coordinates: Coordinates? = null,
-    @SerializedName("dt")
-    val calculatedWeatherTimeStamp: Long? = null,
+    @PrimaryKey
+    val id: Int,
+
     @SerializedName("main")
+    @Embedded
     val temp: Temperature? = null,
+
     @SerializedName("name")
     val locationName: String? = null,
+
     @SerializedName("sys")
+    @Embedded
     val countryInfo: CountryInfo? = null,
+
     @SerializedName("weather")
+    @field:TypeConverters(Converters::class)
     val weather: List<Weather>? = null,
+
     @SerializedName("wind")
-    val wind: Wind? = null
+    @Embedded
+    val wind: Wind? = null,
+
+    @SerializedName("dt_txt")
+    val forecastDateTime: String? = null
 )

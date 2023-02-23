@@ -22,17 +22,32 @@
         android:id="@+id/home_fragment"
         android:name="com.forecasty.view.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/frag_home" >
+        tools:layout="@layout/frag_home">
 
         <action
             android:id="@+id/action_home_fragment_to_current_weather_fragment"
             app:destination="@id/current_weather_fragment" />
+
+        <action
+            android:id="@+id/action_home_fragment_to_forecast_fragment"
+            app:destination="@id/forecast_fragment" />
     </fragment>
 
     <fragment
         android:id="@+id/current_weather_fragment"
         android:name="com.forecasty.view.current_weather.CurrentWeatherFragment"
         android:label="@string/title_current_weather"
-        tools:layout="@layout/frag_current_weather" />
+        tools:layout="@layout/frag_current_weather">
+
+        <action
+            android:id="@+id/action_current_weather_fragment_to_forecast_fragment"
+            app:destination="@id/forecast_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/forecast_fragment"
+        android:name="com.forecasty.view.forecast.ForecastFragment"
+        android:label="@string/title_forecast"
+        tools:layout="@layout/frag_forecast" />
 
 </navigation>

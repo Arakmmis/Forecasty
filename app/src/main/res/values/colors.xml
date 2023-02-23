@@ -26,4 +26,6 @@
     <color name="text_color_very_small">@color/black_25</color>
 
     <color name="button_bg_color">#15a9ff</color>
+    <color name="cafe_royale">#60380b</color>
+
 </resources>

@@ -2,11 +2,11 @@ package com.forecasty.data.pojos
 
 import androidx.room.*
 import com.forecasty.domain.local.Converters
-import com.forecasty.domain.local.DbConfig.Constants.TABLE_NAME
+import com.forecasty.domain.local.DbConfig.Constants.CURRENT_WEATHER_TABLE_NAME
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
 
-@Entity(tableName = TABLE_NAME)
+@Entity(tableName = CURRENT_WEATHER_TABLE_NAME)
 data class CurrentDayForecast(
     @SerializedName("id")
     @PrimaryKey

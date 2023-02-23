@@ -1,12 +1,19 @@
 package com.forecasty.data.pojos
 
+import androidx.room.Embedded
+import com.google.gson.annotations.SerializedName
+
 data class City(
+    @SerializedName("id")
     val id: Int,
-    val coordinates: Coordinates,
-    val country: String,
-    val name: String,
-    val population: Int,
-    val sunrise: Int,
-    val sunset: Int,
-    val timezone: Int
+
+    @SerializedName("coord")
+    @Embedded
+    val coordinates: Coordinates? = null,
+
+    @SerializedName("country")
+    val country: String? = null,
+
+    @SerializedName("name")
+    val name: String? = null
 )

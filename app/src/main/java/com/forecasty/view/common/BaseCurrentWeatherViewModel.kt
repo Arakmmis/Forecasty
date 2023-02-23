@@ -18,7 +18,7 @@ import com.forecasty.util.SingleLiveEvent
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-abstract class BaseViewModel(
+abstract class BaseCurrentWeatherViewModel(
     protected val manager: ForecastManager,
     protected val prefsHelper: PrefsHelper
 ) : ViewModel() {

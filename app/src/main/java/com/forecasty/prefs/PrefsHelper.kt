@@ -26,23 +26,51 @@ class PrefsHelper @Inject constructor(@ApplicationContext context: Context) {
                 prefs.getString(Keys.MEASUREMENT_UNIT, "") ?: ""
             ) ?: MeasurementUnit.METRIC
 
+    /**
+     * CURRENT WEATHER
+     */
+
     var coordinates: Coordinates?
         set(value) =
             prefs.edit {
-                putString(Keys.LAST_SEARCHED_LOCATION, GsonUtils.coordinatesToJson(value!!))
+                putString(Keys.LAST_CURRENT_WEATHER_SEARCHED_LOCATION, GsonUtils.coordinatesToJson(value!!))
             }
         get() =
             GsonUtils.getCoordinatesFromString(
-                prefs.getString(Keys.LAST_SEARCHED_LOCATION, "") ?: ""
+                prefs.getString(Keys.LAST_CURRENT_WEATHER_SEARCHED_LOCATION, "") ?: ""
             )
 
     var lastQuery: Pair<Map<String, String>, QueryType>?
         set(value) =
             prefs.edit {
-                putString(Keys.LAST_QUERY, GsonUtils.query(value!!))
+                putString(Keys.LAST_CURRENT_WEATHER_QUERY, GsonUtils.query(value!!))
             }
         get() =
             GsonUtils.getQueryFromString(
-                prefs.getString(Keys.LAST_QUERY, "") ?: ""
+                prefs.getString(Keys.LAST_CURRENT_WEATHER_QUERY, "") ?: ""
+            )
+
+    /**
+     * FORECASTS
+     */
+
+    var lastForecastQuery: Pair<Map<String, String>, QueryType>?
+        set(value) =
+            prefs.edit {
+                putString(Keys.LAST_FORECAST_QUERY, GsonUtils.query(value!!))
+            }
+        get() =
+            GsonUtils.getQueryFromString(
+                prefs.getString(Keys.LAST_FORECAST_QUERY, "") ?: ""
+            )
+
+    var forecastCoordinates: Coordinates?
+        set(value) =
+            prefs.edit {
+                putString(Keys.LAST_FORECAST_SEARCHED_LOCATION, GsonUtils.coordinatesToJson(value!!))
+            }
+        get() =
+            GsonUtils.getCoordinatesFromString(
+                prefs.getString(Keys.LAST_FORECAST_SEARCHED_LOCATION, "") ?: ""
             )
 }

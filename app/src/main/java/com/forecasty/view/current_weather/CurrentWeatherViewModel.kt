@@ -5,10 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import com.forecasty.data.helpers.Status
 import com.forecasty.data.helpers.Wrapper
 import com.forecasty.domain.ForecastManager
-import com.forecasty.domain.local.DbConfig.Constants.LAST_SEARCHED_LIMIT
+import com.forecasty.domain.local.DbConfig.Constants.CURRENT_WEATHER_LAST_SEARCHED_LIMIT
 import com.forecasty.prefs.PrefsHelper
 import com.forecasty.util.MeasurementUnit
-import com.forecasty.view.common.BaseViewModel
+import com.forecasty.view.common.BaseCurrentWeatherViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class CurrentWeatherViewModel @Inject constructor(
     manager: ForecastManager,
     prefsHelper: PrefsHelper
-) : BaseViewModel(manager, prefsHelper) {
+) : BaseCurrentWeatherViewModel(manager, prefsHelper) {
 
     private val _previousSearches = MutableLiveData<List<Pair<String, String>>>()
     val previousSearches: LiveData<List<Pair<String, String>>> = _previousSearches
@@ -47,7 +47,7 @@ class CurrentWeatherViewModel @Inject constructor(
                 Wrapper(
                     Status.ERROR,
                     null,
-                    IllegalArgumentException("getCurrentWeather: latlon string is ill-formatted")
+                    IllegalArgumentException("getCurrentWeather 1: latlon string is ill-formatted")
                 )
             )
         }
@@ -73,7 +73,7 @@ class CurrentWeatherViewModel @Inject constructor(
 
     fun getPreviousSearches() {
         runBlocking {
-            val list = manager.getLastSearchesList(LAST_SEARCHED_LIMIT)?.map {
+            val list = manager.getCurrentWeatherLastSearchesList(CURRENT_WEATHER_LAST_SEARCHED_LIMIT)?.map {
                 if (it.searchTermUsed == it.locationName)
                     String.format("%s, %s", it.locationName, it.countryInfo?.name) to ""
                 else

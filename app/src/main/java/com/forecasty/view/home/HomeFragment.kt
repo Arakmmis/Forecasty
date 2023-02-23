@@ -15,14 +15,14 @@ import com.forecasty.domain.QueryState
 import com.forecasty.prefs.PrefsHelper
 import com.forecasty.util.MeasurementUnit
 import com.forecasty.view.MainActivity
-import com.forecasty.view.common.BaseFragment
+import com.forecasty.view.common.BaseCurrentWeatherFragment
 import com.forecasty.view.common.ErrorView
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment(), OnRefreshListener {
+class HomeFragment : BaseCurrentWeatherFragment(), OnRefreshListener {
 
     private var _binding: FragHomeBinding? = null
     private val binding get() = _binding!!
@@ -67,7 +67,9 @@ class HomeFragment : BaseFragment(), OnRefreshListener {
             swipe.setOnRefreshListener(this@HomeFragment)
 
             layoutWeather.tvNextDays.setOnClickListener {
-                // Navigate to forecast screen
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToForecastFragment()
+                )
             }
         }
     }

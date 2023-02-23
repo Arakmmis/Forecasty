@@ -2,7 +2,7 @@ package com.forecasty.view.home
 
 import com.forecasty.domain.ForecastManager
 import com.forecasty.prefs.PrefsHelper
-import com.forecasty.view.common.BaseViewModel
+import com.forecasty.view.common.BaseCurrentWeatherViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -10,4 +10,4 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     manager: ForecastManager,
     prefsHelper: PrefsHelper
-) : BaseViewModel(manager, prefsHelper)
+) : BaseCurrentWeatherViewModel(manager, prefsHelper)
