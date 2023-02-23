@@ -8,6 +8,7 @@
         <item name="colorOnPrimary">@color/color_accent</item>
         <item name="android:windowBackground">@drawable/bg_gradient</item>
         <item name="android:actionOverflowButtonStyle">@style/ActionButtonOverflow</item>
+        <item name="android:itemTextAppearance">@style/MenuTextAppearance</item>
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/status_bar_color</item>
@@ -15,5 +16,9 @@
 
     <style name="ActionButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_menu</item>
+    </style>
+
+    <style name="MenuTextAppearance" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
+        <item name="android:textColor">@color/text_color_title</item>
     </style>
 </resources>
