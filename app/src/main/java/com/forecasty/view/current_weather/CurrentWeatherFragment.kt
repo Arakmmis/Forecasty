@@ -120,16 +120,9 @@ class CurrentWeatherFragment : BaseCurrentWeatherFragment(), SwipeRefreshLayout.
             }
 
             searchView.bind(
-                onSearchCompleted = { searchQuery, queryType ->
+                onSearchCompleted = { searchQuery ->
                     setSearchViewVisibility(false)
-
-                    when (queryType) {
-                        QueryType.CITY_NAME -> vm.getCurrentWeather(cityName = searchQuery)
-
-                        QueryType.ZIP_CODE -> vm.getCurrentWeather(zipCode = searchQuery)
-
-                        QueryType.LAT_LON -> vm.getCurrentWeather(latlon = searchQuery)
-                    }
+                    vm.getCurrentWeather(searchQuery)
                 },
                 onGetLocationClicked = {
                     setSearchViewVisibility(false)

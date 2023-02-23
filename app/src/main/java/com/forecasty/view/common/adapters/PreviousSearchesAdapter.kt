@@ -53,7 +53,7 @@ class PreviousSearchesAdapter(
                 }
 
                 binding.root.setOnClickListener {
-                    onItemClick(search.second)
+                    onItemClick(search.first)
                 }
             }
         }

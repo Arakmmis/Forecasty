@@ -9,7 +9,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import com.forecasty.R
 import com.forecasty.databinding.ViewSearchBinding
-import com.forecasty.util.QueryType
 import com.forecasty.util.ValidationUtils
 import com.forecasty.view.common.adapters.PreviousSearchesAdapter
 import java.util.regex.Pattern
@@ -22,14 +21,14 @@ class SearchView @JvmOverloads constructor(
 
     private var adapter: PreviousSearchesAdapter? = null
 
-    private lateinit var onSearchCompleted: (query: String, type: QueryType) -> Unit
+    private lateinit var onSearchCompleted: (query: String) -> Unit
 
     init {
         binding = ViewSearchBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
     fun bind(
-        onSearchCompleted: (query: String, type: QueryType) -> Unit,
+        onSearchCompleted: (query: String) -> Unit,
         onGetLocationClicked: () -> Unit,
         onCloseClicked: () -> Unit
     ) {
@@ -51,10 +50,7 @@ class SearchView @JvmOverloads constructor(
             else {
                 rvPreviousSearches.visibility = VISIBLE
                 adapter = PreviousSearchesAdapter(previousSearches) {
-                    onSearchCompleted(
-                        it,
-                        QueryType.LAT_LON
-                    )
+                    onSearchCompleted(it)
                 }
                 rvPreviousSearches.adapter = adapter
             }
@@ -87,7 +83,7 @@ class SearchView @JvmOverloads constructor(
     }
 
     private fun setupClickListeners(
-        onSearchCompleted: (query: String, type: QueryType) -> Unit,
+        onSearchCompleted: (query: String) -> Unit,
         onGetLocationClicked: () -> Unit,
         onCloseClicked: () -> Unit
     ) {
@@ -102,10 +98,7 @@ class SearchView @JvmOverloads constructor(
                     }
 
                     onSearchCompleted(
-                        etSearch.text.trim().toString(),
-                        QueryType.values().find {
-                            it.resId == rgSearchType.checkedRadioButtonId
-                        } ?: QueryType.CITY_NAME
+                        etSearch.text.trim().toString()
                     )
 
                     return@setOnEditorActionListener true

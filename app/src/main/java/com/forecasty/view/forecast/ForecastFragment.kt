@@ -117,16 +117,9 @@ class ForecastFragment : Fragment(), OnRefreshListener {
             swipe.setOnRefreshListener(this@ForecastFragment)
 
             searchView.bind(
-                onSearchCompleted = { searchQuery, queryType ->
+                onSearchCompleted = { searchQuery ->
                     setSearchViewVisibility(false)
-
-                    when (queryType) {
-                        QueryType.CITY_NAME -> vm.getForecast(cityName = searchQuery)
-
-                        QueryType.ZIP_CODE -> vm.getForecast(zipCode = searchQuery)
-
-                        QueryType.LAT_LON -> vm.getForecast(latlon = searchQuery)
-                    }
+                    vm.getForecast(query = searchQuery)
                 },
                 onGetLocationClicked = {
                     setSearchViewVisibility(false)
